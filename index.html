@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <script src="vue.js"></script>
+    <link rel="stylesheet" href="animate.css">
+    <style>
+      #final{
+        animation-delay: 2s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+        <h3>Testez vos connaissances féministes</h3>
+       <p> Les droits des femmes ont été conquis par leurs actions au fil des décennies. Avec le quiz de l’Observatoire des violences envers les femmes du Conseil départemental de la Seine-Saint-Denis, </p>
+      <h1>Rendez aux femmes ce qu’elles ont gagné !</h1>
+      <button v-on:click="jouer=!jouer;afficherJouer=true;afficherQuestion=true;nbrQuestion=3;tirer();" v-if="!jouer">Jouer pour 3 questions</button>
+      <button v-on:click="jouer=!jouer;afficherJouer=true;afficherQuestion=true;nbrQuestion=5;tirer();" v-if="!jouer">Jouer pour 5 questions</button>
+      <button v-on:click="jouer=!jouer;afficherJouer=true;afficherQuestion=true;nbrQuestion=10;tirer();" v-if="!jouer">Jouer pour 10 questions</button>
+      <transition
+        name="custom-classes-transition"
+        enter-active-class="animated lightSpeedIn"
+        leave-active-class="animated fadeOut"
+        mode="out-in"
+      >
+      <div id="blocJeux" v-if="afficherJouer">
+        
+        <transition
+        name="custom-classes-transition"
+        enter-active-class="animated lightSpeedIn"
+        leave-active-class="animated fadeOut"
+        mode="out-in"
+      >
+        <div key="jeux" v-if="afficherQuestion">
+            <div id="question">
+                {{questionID +1}} - {{choix[questionID].question}}
+              </div>
+              <div id="choix">
+                <p v-for="reponse of choix[questionID].reponses">
+                  <button @click="choisir(reponse.valeur)">{{reponse.texte}}</button>
+                </p>
+              </div>
+        </div>
+        <div key="reponse" v-else-if="afficherReponse">
+                <strong>{{afficherGagner}}</strong>
+                {{choix[questionID].texte_reponse}}
+                <button v-on:click="suivant" v-if="afficherSuivant">Question suivante</button>
+        </div>
+      </transition>
+      </div>
+      </transition>
+      <transition
+        name="custom-classes-transition"
+        enter-active-class="animated lightSpeedIn delay-2s"
+        leave-active-class="animated fadeOut"
+      >
+      <div key="final" id="final" v-if="afficherFinal">
+        Resultat : {{gagner}} sur {{nbrQuestion}}
+        <button @click="recommencer()">Terminer</button>
+      </div>
+      </transition>
+    </div>
+  </body>
+  <script>
+    var app = new Vue({
+      el: '#app',
+        data() {
+          return {
+            choix:[],
+            jouer: false,
+            afficherJouer: false,
+            nbrQuestion:3,
+            afficherReponse: false,
+            afficherSuivant:false,
+            afficherQuestion:false,
+            afficherFinal:false,
+            afficherGagner:'',
+            gagner:0,
+            questionID:0,
+            tirage: [0,1,2,3,4,5,6,7,8,9],
+            quizz: [
+              {
+                "id": 0,
+                "question": "Qui a dit : « La femme a le droit de monter à la guillotine. Elle doit avoir le droit de monter à la tribune » ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "Olympe de Gouges",
+                    "valeur" : 1
+                  },
+                  "reponseB" : {
+                    "texte" : "Georges Sand",
+                    "valeur" : 0
+                  },
+                  "reponseC" : {
+                    "texte" : "Anatole France",
+                    "valeur" : 0
+                  }
+                },
+                "texte_reponse": "Olympe de Gouges (1748-1793), femme de lettre et révolutionnaire française, auteure de la « Déclaration des droits de la femme et de la citoyenne ». Elle réclama l’accès des femmes au pouvoir politique."
+              },
+              {
+                "id": 1,
+                "question": "Flora Tristan (1803-1844) est :",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "La 1ère femme astronaute",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "La 1ère femme pharmacienne ",
+                    "valeur" : 0
+                  },
+                  "reponseC" : {
+                    "texte" : "La pionnière du féminisme dans le combat pour la libération des femmes",
+                    "valeur" : 1
+                  }
+                },
+                "texte_reponse": "La pionnière du féminisme dans le combat pour l’émancipation des femmes, qui pour elle, est indissociable de la lutte ouvrière."
+              },
+              {
+                "id": 2,
+                "question": "Quel est le premier pays à avoir accordé le droit de vote aux femmes ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "Les USA",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "L’Angleterre",
+                    "valeur" : 0
+                  },
+                  "reponseC" : {
+                    "texte" : "La Nouvelle-Zélande",
+                    "valeur" : 1
+                  }
+                },
+                "texte_reponse": "La Nouvelle-Zélande fut le premier pays à accorder le droit de vote aux femmes en 1893."
+              },
+              {
+                "id": 3,
+                "question": "Quand les femmes ont-elles obtenu le droit de vote en France ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "1936",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "1944",
+                    "valeur" : 1
+                  },
+                  "reponseC" : {
+                    "texte" : "1948",
+                    "valeur" : 0
+                  }
+                },
+                "texte_reponse": "1944"
+              },
+              {
+                "id": 4,
+                "question": "Dans la langue française, la règle du « masculin l’emporte sur le féminin » a toujours existé :",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "Vrai",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "Faux",
+                    "valeur" : 1
+                  }
+                },
+                "texte_reponse": "Faux, avant XVIIIe siècle, la règle grammaticale de proximité était de mise, les adjectifs se rapportant à plusieurs noms s’accordaient avec le nom le plus proche. Par exemple : « Les femmes et les hommes sont égaux» et « Les hommes et les femmes sont égales »"
+              },
+              {
+                "id": 5,
+                "question": "Quel est le pourcentage de femmes députées en France aujourd’hui ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "26 %",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "39 %",
+                    "valeur" : 1
+                  },
+                  "reponseC" : {
+                    "texte" : "48 %",
+                    "valeur" : 0
+                  }
+                },
+                "texte_reponse": "39% des postes de député-e-s sont occupés par des femmes en 2018, contre 26% en 2012"
+              },
+              {
+                "id": 6,
+                "question": "Quelle est la date à laquelle les filles et les garçons obtiennent un programme scolaire identique dans l’enseignement secondaire en France ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "1810",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "1924",
+                    "valeur" : 1
+                  },
+                  "reponseC" : {
+                    "texte" : "196",
+                    "valeur" : 0
+                  }
+                },
+                "texte_reponse": "En 1924, les programmes scolaires différenciés selon les sexes disparaissent du secondaire, entrainant un baccalauréat unique."
+              },
+              {
+                "id": 7,
+                "question": "En France sur les 101 conseils départementaux, combien sont présidés par des femmes ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "10",
+                    "valeur" : 1
+                  },
+                  "reponseB" : {
+                    "texte" : "15",
+                    "valeur" : 0
+                  },
+                  "reponseC" : {
+                    "texte" : "30",
+                    "valeur" : 0
+                  }
+                },
+                "texte_reponse": "En 1924, les programmes scolaires différenciés selon les sexes disparaissent du secondaire, entrainant un baccalauréat unique."
+              },
+              {
+                "id": 8,
+                "question": "Depuis quand les femmes françaises peuvent-elles travailler sans l’autorisation de leur mari ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "1789",
+                    "valeur" : 0
+                  },
+                  "reponseB" : {
+                    "texte" : "1920",
+                    "valeur" : 0
+                  },
+                  "reponseC" : {
+                    "texte" : "1965",
+                    "valeur" : 1
+                  }
+                },
+                "texte_reponse": "Jusqu’en 1965, les femmes mariées avaient besoin de l’autorisation de leur mari pour travailler, avoir un compte en banque et même disposer de leurs biens"
+              },
+              {
+                "id": 9,
+                "question": "Chaque jour, en raison des inégalités salariales à partir de quelle heure les femmes françaises travaillent-elles « gratuitement » jusqu’à la fin de la journée de travail ?",
+                "reponses": {
+                  "reponseA" : {
+                    "texte" : "14h38",
+                    "valeur" : 1
+                  },
+                  "reponseB" : {
+                    "texte" : "15h02",
+                    "valeur" : 0
+                  },
+                  "reponseC" : {
+                    "texte" : "116h24",
+                    "valeur" : 0
+                  }
+                },
+                "texte_reponse": "Selon les données de l’OCDE, chaque jour, en raison des inégalités salariales entre femmes et hommes, les femmes françaises travaillent « gratuitement » à partir de 14h38 et ce jusqu’à 17h."
+              }
+            ]
+          }
+        },
+        created() {
+          this.recommencer();
+        },
+        methods: {
+          choisir(valeur) {
+            (valeur>0)? this.afficherGagner ="Gagné !" : this.afficherGagner ="perdu !";
+            (valeur>0)? this.gagner += valeur : this.gagner +=0;
+            this.afficherReponse =true;
+            this.afficherSuivant=true;
+            this.afficherQuestion=false;
+            this.questionID==(this.nbrQuestion-1)? this.final():false;
+          },
+          suivant() {
+            this.afficherReponse=false;
+            this.afficherSuivant=false;
+            this.questionID++ ;
+            this.afficherQuestion=true;
+          },
+          final() {
+            this.afficherQuestion=false;
+            this.afficherSuivant=false;
+            this.afficherFinal=true;
+          },
+          tirer(){
+            this.tirage.sort(function() { return 0.5 - Math.random() });
+            for (var i = 0; i < this.nbrQuestion; i++) {
+              this.choix[i]=this.quizz[this.tirage[i]];
+            }
+          },
+          recommencer() {
+            this.questionID=0;
+            this.gagner=0;
+            this.jouer=false;
+            this.afficherJouer=false;
+            this.afficherFinal=false;
+            this.afficherGagner=false;
+            this.afficherSuivant=false;
+            this.afficherReponse=false;
+            this.afficherQuestion=false;
+            this.tirer();
+          }
+        }
+    })
+  </script>
+</html>
