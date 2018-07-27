@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <script src="vue.js"></script>
     <link rel="stylesheet" href="animate.css">
+    <link rel="stylesheet" href="style.css">
     <style>
       #final{
         animation-delay: 2s;
@@ -293,6 +294,7 @@
             this.afficherFinal=true;
           },
           tirer(){
+            this.tirage.sort(function() { return 0.5 - Math.random() });
             this.tirage.sort(function() { return 0.5 - Math.random() });
             for (var i = 0; i < this.nbrQuestion; i++) {
               this.choix[i]=this.quizz[this.tirage[i]];
